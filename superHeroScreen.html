@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>SuperHero</title>
+        <link href="./superHerScreen.css" rel="stylesheet" >
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://kit.fontawesome.com/1f11bbce79.js" crossorigin="anonymous"></script>
+    </head>
+
+    <body>
+        <!-- navbar -->
+        <div class="nav-style">
+            <div>
+                <a class="nav-bar" href="index.html">Super Hero Hunter</a>
+            </div>
+            <div>
+                <a class="nav-bar" href="favScreen.html">Favourites</a>
+            </div>
+        </div>
+        <div class="cover">
+            
+            <!-- superhero Details -->
+            <div id="details">
+
+                <span>Name: </span>  
+                <h1 id="name"></h1>                
+                
+                <span>Description: </span>
+                <p id="description"></p>
+
+                <span id="seriesId"></span>
+                <p id="series"></p>
+                <ul id="seriesList"></ul>
+
+                <span id="storiesId"></span>
+                <p id="stories"></p>
+                <ul id="storiesList"></ul>
+
+                <span id="eventsId"></span>
+                <p id="events"></p>
+                <ul id="eventsList"></ul>
+
+                <span id="comicsId"></span>
+                <p id="comics"></p>
+                <ul id="comicsList"></ul>
+                
+                
+            </div>
+
+            <div class="imageCover">
+                <!-- superhero photo -->
+                <img id="imagehero" src="" alt="SuperHeroPhoto">
+                <!-- To add to Favourites -->
+                <a class=' imagehero' id="favTag"><i class="fas fa-plus"></i> Add To My Favourites</a>
+            </div>
+            
+            
+        </div>
+        
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    </body>
+    <!-- crypto-js import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        // creating a new set for favourite superhero ids
+
+        var arr = new Set([]);
+
+        // flag to check if it already present in fav list
+        var flag = false
+
+        var publickey = "df71f2ab66c990ee156d267aad06cdba";
+        var privatekey = "9bc6fd8015a499e0593c4769ea0ba9dc64c24481";
+        var ts = new Date().getTime();
+        var stringToHash = ts + privatekey + publickey;
+        var hash = CryptoJS.MD5(stringToHash).toString();
+
+        // getting the id of the superhero from the query in search parameters to display the details and image of the superhero in the html file
+
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+
+        // api calls using id
+        var request = new XMLHttpRequest();
+        request.open('GET', "https://gateway.marvel.com:443/v1/public/characters/" + params.id + "?ts=" + ts + "&apikey=" + publickey + "&hash=" + hash, true);
+        request.responseType = 'json'
+
+        request.onload = function () {
+            var newCharacterJSON = this.response.data.results[0];
+            // adding the details to the html page using javascript
+            document.getElementById("imagehero").src = newCharacterJSON.thumbnail.path + "." +newCharacterJSON.thumbnail.extension;
+
+            document.getElementById("name").innerText = newCharacterJSON.name;
+
+            document.getElementById("description").innerText = newCharacterJSON.description;
+
+            
+            let seriesList = document.getElementById("seriesList");
+            if(newCharacterJSON.series.available > 0 ){
+                document.getElementById('seriesId').innerHTML = 'Series :'
+                document.getElementById("series").innerText = "Total available : "+newCharacterJSON.series.available+ ", Few are listed below";
+                for (i = 0; i < newCharacterJSON.series.available && i <= 5; ++i) {
+                    let li = document.createElement('li');
+                    li.innerText = newCharacterJSON.series.items[i].name;
+                    seriesList.appendChild(li);
+                }
+            }
+
+
+            let storiesList = document.getElementById("storiesList");
+            if(newCharacterJSON.stories.available > 0 ){
+                document.getElementById('storiesId').innerHTML = 'stories :'
+                document.getElementById("stories").innerText = "Total available : "+newCharacterJSON.stories.available+", Few are listed below";
+                for (i = 0; i < newCharacterJSON.stories.available && i <= 5; ++i) {
+                    let li = document.createElement('li');
+                    li.innerText = newCharacterJSON.stories.items[i].name;
+                    storiesList.appendChild(li);
+                }
+            }
+
+
+            let eventsList = document.getElementById("eventsList");
+            if(newCharacterJSON.events.available > 0 ){
+                document.getElementById('eventsId').innerHTML = 'events :'
+                document.getElementById("events").innerText = "Total available : "+newCharacterJSON.events.available+", Few are listed below";
+                for (i = 0; i < newCharacterJSON.events.available && i <= 5; ++i) {
+                    let li = document.createElement('li');
+                    li.innerText = newCharacterJSON.events.items[i].name;
+                    eventsList.appendChild(li);
+                }
+            }
+
+
+            let comicsList = document.getElementById("comicsList");
+            if(newCharacterJSON.comics.available > 0 ){
+                document.getElementById('comicsId').innerHTML = 'comics :'
+                document.getElementById("comics").innerText = "Total available : " + newCharacterJSON.comics.available+", Few are listed below";
+                for (i = 0; i < newCharacterJSON.comics.available && i <= 5; ++i) {
+                    let li = document.createElement('li');
+                    li.innerText = newCharacterJSON.comics.items[i].name;
+                    comicsList.appendChild(li);
+                }
+            }
+
+            // to add at fav list
+            document.getElementById("favTag").onclick = function () {          
+                function getCookie(cname) {
+                        let name = cname + "=" ;
+                        let decodedCookie = decodeURIComponent(document.cookie);
+                        let ca = decodedCookie.split(';');
+                        for (let i = 0; i < ca.length; i++) {
+                            let c = ca[i];
+                            while (c.charAt(0) == ' ') {
+                                c = c.substring(1);
+                            }
+                            if (c.indexOf(name) == 0) {
+                                return c.substring(name.length, c.length);
+                            }
+                        }
+                        return "";
+                    }
+
+                if(flag){
+                    flag=false
+                    document.getElementById("favTag").innerHTML = '<i class="fas fa-check-circle"></i>Added To Favourites!';
+                    // editing cookies for favourite superhero of the users according to their preferences
+                    var existingCookie = getCookie("favHero");
+                    let  availableInCookie = existingCookie + ',' + params.id
+                    const mystring = availableInCookie.split(',');
+                    let uniqueArray = mystring.filter((value, index, self) => self.indexOf(value) === index);
+                    document.cookie = "favHero=" + uniqueArray.join(',');
+                }else{
+
+                    // remove if already added to fav list
+                    flag=true
+                    document.getElementById("favTag").innerHTML = '<i class="fas fa-plus"></i> Add To My Favourites';                   
+                    // editing cookies for favourite superhero of the users according to their preferences
+                    var existingCookie = getCookie("favHero");
+                    let  availableInCookie = existingCookie + ',' + params.id
+                    const mystring = availableInCookie.split(',');
+                    let uniqueArray = mystring.filter((value, index, self) => self.indexOf(value) === index);
+
+                    let index = uniqueArray.indexOf(params.id);
+                    if (index !== -1) {
+                        uniqueArray.splice(index, 1);
+                    }
+                    document.cookie = "favHero=" + uniqueArray.join(',');
+
+                } 
+            }       
+
+        }
+        request.send();
+
+       // Check if its already added to fav list 
+        function checkFavList() {
+             function getCookie(cname) {
+                    let name = cname + "=" ;
+                    let decodedCookie = decodeURIComponent(document.cookie);
+                    let ca = decodedCookie.split(';');
+                    for (let i = 0; i < ca.length; i++) {
+                        let c = ca[i];
+                        while (c.charAt(0) == ' ') {
+                            c = c.substring(1);
+                        }
+                        if (c.indexOf(name) == 0) {
+                            return c.substring(name.length, c.length);
+                        }
+                    }
+                    return "";
+                }
+            var arr=getCookie("favHero").split(',');
+            for(i= 0; i<arr.length ; i++){
+                if(params.id===arr[i]){
+                    flag = false
+                    document.getElementById("favTag").style.backgroundColor = "yellow";
+                    document.getElementById("favTag").innerHTML = '<i class="fas fa-check-circle"></i>Added To Favourites!';
+                }
+            }
+
+        }
+        checkFavList()
+
+        // chaange button Color base on the condition of fav list 
+        document.getElementById("favTag").addEventListener("click", function () {
+            if(flag){
+                document.getElementById("favTag").style.backgroundColor = "yellow";
+                document.getElementById("favTag").innerHTML = '<i class="fas fa-check-circle"></i>Added To Favourites!';
+            }else{
+                document.getElementById("favTag").style.backgroundColor = "";
+                document.getElementById("favTag").innerHTML = '<i class="fas fa-plus"></i> Add To My Favourites';
+                }
+
+        })
+    
+    </script>
+</html>

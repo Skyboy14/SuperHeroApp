@@ -1,0 +1,27 @@
+body{
+    background-image: url(./assests/backgroud2.jpg) !important;
+    background-repeat: repeat;
+}
+.nav-style{
+    background-color: darkslategrey;
+    display: flex;
+    padding: 10px;
+    font-size: larger;
+    color: white;
+    font-weight: 600;
+    opacity: 0.9;
+    justify-content: space-between;
+}
+
+.nav-bar{
+    text-decoration: none;
+    color: white;
+}
+
+#favListData{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 50px;
+    padding: 50px;
+}

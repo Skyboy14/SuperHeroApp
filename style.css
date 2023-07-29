@@ -1,0 +1,59 @@
+body{
+    background-image: url(./assests/background.jpg);
+    background-repeat: repeat;
+}
+.input-group{
+    justify-content: center;
+}
+.cover01{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.searchTag{
+    background-color: gainsboro;
+    padding: 6px;
+    font-weight: 600;
+    border-radius: 9px 0 0 9px;
+}
+#suggestions{
+    padding: 0;
+}
+
+#suggestions > a> div {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    align-content: center;
+    background-color: white;
+    list-style-type: none;
+    
+}
+
+#suggestions > a>div>img {
+    width: 32px;
+    height: 32px;
+}
+
+#suggestions > a>div>li {
+   text-decoration: none;
+   color: black;
+}
+
+.nav-style{
+    background-color: darkslategrey;
+    display: flex;
+    padding: 10px;
+    font-size: larger;
+    color: white;
+    font-weight: 600;
+    opacity: 0.9;
+    justify-content: space-between;
+}
+
+.nav-bar{
+    text-decoration: none;
+    color: white;
+}
